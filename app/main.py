@@ -163,13 +163,12 @@ async def predict(file: UploadFile = File(...)):
 @app.get("/predict", response_class=HTMLResponse)
 async def predict_page(request: Request, result: Optional[str] = None):
     """Render prediction result page (for GET redirects)."""
-    return templates.TemplateResponse(
-        "result.html",
-        {
-            "request": request,
-            "result": result,
-        },
+    template = template_env.get_template("result.html")
+    html = template.render(
+        request=request,
+        result=result,
     )
+    return HTMLResponse(html)
 
 
 @app.get("/api/model-info")

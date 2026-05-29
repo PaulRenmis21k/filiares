@@ -13,7 +13,7 @@ from typing import Optional
 from fastapi import FastAPI, UploadFile, File, HTTPException, Request
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
+from jinja2 import Environment, FileSystemLoader
 from PIL import Image
 import io
 
@@ -44,8 +44,12 @@ app = FastAPI(
 # Mount static files
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
-# Templates
-templates = Jinja2Templates(directory="app/templates")
+# Templates (manual Jinja2 to avoid Starlette cache bug on Render)
+template_env = Environment(
+    loader=FileSystemLoader("app/templates"),
+    auto_reload=False,
+    cache_size=0  # Disable cache to avoid TypeError: unhashable type: 'dict'
+)
 
 
 # -------------------- Startup / Shutdown --------------------
@@ -65,17 +69,14 @@ async def startup_event():
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
     """Render the home page."""
+    template = template_env.get_template("index.html")
     model_info = classifier.get_model_info()
-    is_loaded = model_info["status"] == "loaded"
-    return templates.TemplateResponse(
-        "index.html",
-        {
-            "request": request,
-            "model_loaded": is_loaded,
-            "classes": CLASS_LABELS,
-            "model_info_json": str(model_info),
-        },
+    html = template.render(
+        request=request,
+        model_loaded=model_info["status"] == "loaded",
+        classes=CLASS_LABELS,
     )
+    return HTMLResponse(html)
 
 
 @app.get("/health")

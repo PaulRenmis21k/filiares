@@ -1,41 +1,24 @@
 # Dockerfile for Potato Disease Classifier
+# Single-stage build for Render.com compatibility
 
-# ---- Build Stage ----
-FROM python:3.13-slim AS builder
+FROM python:3.12-slim
 
 WORKDIR /app
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
-    libgl1-mesa-glx \
+# Install ONLY system dependencies needed by TensorFlow (CPU)
+RUN apt-get update --fix-missing && apt-get install -y --no-install-recommends \
     libglib2.0-0 \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-
-# ---- Runtime Stage ----
-FROM python:3.13-slim AS runtime
-
-WORKDIR /app
-
-# Install runtime system dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    libgl1-mesa-glx \
-    libglib2.0-0 \
-    && rm -rf /var/lib/apt/lists/*
-
-# Copy Python packages from builder
-COPY --from=builder /usr/local/lib/python3.13/site-packages /usr/local/lib/python3.13/site-packages
-COPY --from=builder /usr/local/bin /usr/local/bin
+RUN pip install --no-cache-dir --timeout 120 -r requirements.txt
 
 # Copy application code
 COPY . .
 
-# Create directories for models and uploads
-RUN mkdir -p models uploads
+# Create directories for models, uploads and training data
+RUN mkdir -p models uploads training_data/early_blight training_data/late_blight training_data/healthy
 
 # Expose port
 EXPOSE 8000

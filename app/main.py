@@ -66,13 +66,14 @@ async def startup_event():
 async def home(request: Request):
     """Render the home page."""
     model_info = classifier.get_model_info()
+    is_loaded = model_info["status"] == "loaded"
     return templates.TemplateResponse(
         "index.html",
         {
             "request": request,
-            "model_loaded": model_info["status"] == "loaded",
+            "model_loaded": is_loaded,
             "classes": CLASS_LABELS,
-            "model_info": model_info,
+            "model_info_json": str(model_info),
         },
     )
 

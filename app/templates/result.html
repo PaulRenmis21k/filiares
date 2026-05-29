@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultado · Potato Disease Classifier</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <a href="/" class="logo">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 40 40" fill="none">
+                        <circle cx="20" cy="20" r="18" stroke="currentColor" stroke-width="2"/>
+                        <path d="M20 8C16 8 12 14 12 20C12 26 16 32 20 32C24 32 28 26 28 20C28 14 24 8 20 8Z" fill="currentColor" opacity="0.3"/>
+                        <circle cx="20" cy="20" r="4" fill="currentColor"/>
+                    </svg>
+                </div>
+                <div class="logo-text">
+                    <span class="logo-title">Potato<span class="highlight">Disease</span>Classifier</span>
+                </div>
+            </a>
+            <a href="/" class="nav-link">← Volver al inicio</a>
+        </div>
+    </header>
+
+    <main class="result-page">
+        <div class="container">
+            <div class="result-card">
+                <h1>Resultado de clasificación</h1>
+                <div id="result-content">
+                    <p>Cargando resultado...</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>Potato Disease Classifier · Proyecto Universitario · Mayo 2026</p>
+        </div>
+    </footer>
+
+    <script>
+        // Parse result from URL if needed (for GET redirects)
+        const resultData = {{ result|safe if result else 'null' }};
+        if (resultData) {
+            const content = document.getElementById('result-content');
+            content.innerHTML = `
+                <div class="result-main">
+                    <div class="result-badge" style="background: ${resultData.color}20;">
+                        <span class="result-icon">🍃</span>
+                    </div>
+                    <div class="result-class" style="color: ${resultData.color};">${resultData.class_name}</div>
+                    <div class="result-confidence">Confianza: ${(resultData.confidence * 100).toFixed(1)}%</div>
+                </div>
+                <a href="/" class="btn btn-primary">Clasificar otra imagen</a>
+            `;
+        }
+    </script>
+</body>
+</html>

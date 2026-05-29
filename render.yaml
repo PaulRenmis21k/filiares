@@ -1,0 +1,52 @@
+# =============================================
+# Render Blueprint - Potato Disease Classifier
+# =============================================
+# Este archivo permite el despliegue automatizado
+# de la aplicación en Render.com.
+#
+# Para desplegar:
+#   1. Sube el proyecto a GitHub
+#   2. Conecta tu repositorio en Render
+#   3. Render detectará este archivo automáticamente
+#
+# Docs: https://render.com/docs/blueprint-spec
+# =============================================
+
+services:
+  # Web Service: FastAPI + TensorFlow
+  - type: web
+    name: potato-disease-classifier
+    runtime: python
+    region: ohio  # Us-east (cerca de Latinoamérica)
+    plan: free
+
+    buildCommand: |
+      pip install --upgrade pip
+      pip install -r requirements.txt
+
+    startCommand: |
+      mkdir -p /opt/render/project/src/data/uploads /opt/render/project/src/data/training_data/early_blight /opt/render/project/src/data/training_data/late_blight /opt/render/project/src/data/training_data/healthy &&
+      uvicorn app.main:app --host 0.0.0.0 --port $PORT
+
+    healthCheckPath: /health
+
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.13.0
+      - key: PYTHONUNBUFFERED
+        value: 1
+      - key: TF_CPP_MIN_LOG_LEVEL
+        value: 2
+      - key: UPLOAD_DIR
+        value: /opt/render/project/src/data/uploads
+      - key: TRAINING_DATA_DIR
+        value: /opt/render/project/src/data/training_data
+
+    # Disco persistente: tanto uploads/ como training_data/ se mantienen entre deploys
+    disk:
+      name: data
+      mountPath: /opt/render/project/src/data
+      sizeGB: 1
+
+    # Auto-deploy al hacer push a main/master
+    autoDeploy: true

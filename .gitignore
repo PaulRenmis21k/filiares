@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual Environment
+venv/
+env/
+.venv/
+*.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Project specific
+# Models (track the main model file for CI/CD but ignore intermediate artifacts)
+models/*.h5
+models/*.pkl
+models/plots/
+!models/*.keras
+
+# Datasets
+datasets/
+kagglehub/
+
+# Jupyter
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log

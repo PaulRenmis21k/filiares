@@ -1,0 +1,20 @@
+POTATO DISEASE CLASSIFIER - TRAINING SUMMARY
+==================================================
+
+Architecture: MobileNetV2 (transfer learning)
+Input Size: 128x128x3 ([-1, 1] normalized)
+Number of Classes: 3
+Classes: Early Blight, Late Blight, Healthy
+
+Epochs trained: 5
+Best Val Accuracy: 0.9736
+Test Accuracy: 0.9702
+Test Loss: 0.1041
+
+Hyperparameters:
+  - Base Model: MobileNetV2 (ImageNet weights, frozen)
+  - Optimizer: Adam (lr=0.001)
+  - Batch Size: 32
+  - Data Augmentation: True (via tf.data pipeline)
+  - Validation Split: 0.2
+  - Test Split: 0.1

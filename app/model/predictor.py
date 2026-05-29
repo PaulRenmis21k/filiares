@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Tuple, List, Optional
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"  # Force CPU-only
 
 import tensorflow as tf
 from tensorflow import keras
